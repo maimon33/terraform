@@ -1,9 +1,14 @@
-variable "tf-region" {
-  default = "eu-=west-1"
+variable "region" {
+  default = "eu-west-1"
   type    = string
 }
 
-variable "vpc-cidr" {
+variable "vpc_cidr" {
   default = "172.16.0.0/16"
+  type    = string
+}
+
+variable "env_name" {
+  default = "terraform"
   type    = string
 }

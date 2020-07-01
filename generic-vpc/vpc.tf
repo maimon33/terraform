@@ -1,45 +1,45 @@
-resource "aws_vpc" "tf-vpc" {
-  cidr_block = var.vpc-cidr
+resource "aws_vpc" "terraform-vpc" {
+  cidr_block = var.vpc_cidr
 
   tags = {
-    Name = "terraform-vpc"
+    Name = "${var.env_name}-vpc"
   }
 }
 
-resource "aws_subnet" "tf-public" {
-  count = 3
+resource "aws_subnet" "terraform_public" {
+  count = length(data.aws_availability_zones.available.names)
 
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  cidr_block        = cidrsubnet(var.vpc-cidr, 8, count.index)
-  vpc_id            = aws_vpc.tf-vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
+  vpc_id            = aws_vpc.terraform-vpc.id
 
   tags = {
-    Name = "terraform-public_subnet"
+    Name = "${var.env_name}-public_subnet"
   }
 }
 
-resource "aws_subnet" "tf-private" {
-  count = 3
+resource "aws_subnet" "terraform_private" {
+  count = length(data.aws_availability_zones.available.names)
 
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  cidr_block        = cidrsubnet(var.vpc-cidr, 8, count.index + 3)
-  vpc_id            = aws_vpc.tf-vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 3)
+  vpc_id            = aws_vpc.terraform-vpc.id
 
   tags = {
-    Name = "terraform-private_subnet"
+    Name = "${var.env_name}-private_subnet"
   }
 }
 
 resource "aws_internet_gateway" "terraform_igw" {
-  vpc_id = aws_vpc.tf-vpc.id
+  vpc_id = aws_vpc.terraform-vpc.id
 
   tags = {
-    Name = "terraform igw"
+    Name = "${var.env_name} igw"
   }
 }
 
-resource "aws_route_table" "tf-public-rt" {
-  vpc_id = aws_vpc.tf-vpc.id
+resource "aws_route_table" "terraform_public_route_table" {
+  vpc_id = aws_vpc.terraform-vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -47,8 +47,8 @@ resource "aws_route_table" "tf-public-rt" {
   }
 }
 
-resource "aws_route_table" "tf-private-rt" {
-  vpc_id = aws_vpc.tf-vpc.id
+resource "aws_route_table" "terraform_private_route_table" {
+  vpc_id = aws_vpc.terraform-vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -56,18 +56,18 @@ resource "aws_route_table" "tf-private-rt" {
   }
 }
 
-resource "aws_route_table_association" "tf-public-rt-assoc" {
+resource "aws_route_table_association" "terraform_public_route_table_assoc" {
   count = 3
 
-  subnet_id      = aws_subnet.tf-public.*.id[count.index]
-  route_table_id = aws_route_table.tf-public-rt.id
+  subnet_id      = aws_subnet.terraform_public.*.id[count.index]
+  route_table_id = aws_route_table.terraform_public_route_table.id
 }
 
-resource "aws_route_table_association" "tf-private-rt-assoc" {
+resource "aws_route_table_association" "terraform_private_route_table_assoc" {
   count = 3
 
-  subnet_id      = aws_subnet.tf-private.*.id[count.index]
-  route_table_id = aws_route_table.tf-private-rt.id
+  subnet_id      = aws_subnet.terraform_private.*.id[count.index]
+  route_table_id = aws_route_table.terraform_private_route_table.id
 }
 
 resource "aws_eip" "terraform_eip" {
@@ -76,9 +76,9 @@ resource "aws_eip" "terraform_eip" {
 
 resource "aws_nat_gateway" "terraform_nat_gw" {
   allocation_id = aws_eip.terraform_eip.id
-  subnet_id     = aws_subnet.tf-private["0"].id
+  subnet_id     = aws_subnet.terraform_private["0"].id
 
   tags = {
-    Name = "terraform NAT gw"
+    Name = "${var.env_name} NAT gw"
   }
 }
