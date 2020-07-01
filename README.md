@@ -6,7 +6,9 @@ General purpose terraform stacks
 Creates a VPC with misc services.
 
 ### Start
-*
+```
+$ terraform init -backend-config="bucket=<ENV>" -backend-config="key=<ENV>.tfstate" -backend-config="region=eu-west-1" -backend=true -force-copy -get=true -input=false
+```
 
 ## EKS cluster
 
