@@ -42,11 +42,11 @@ if /i "%mode%"=="destroy" goto :destroy
 
 REM Terraform apply
 if /i "%mode%"=="quiet" set quiet_mode="-auto-approve"
-terraform apply -var env_name=%env_name% -var region=%region% %quiet_mode%
+terraform apply -var env_name=%env_name% -var region=%region% -var backend_bucket=%s3_bucket% %quiet_mode%
 set quiet_mode=
 
 REM provision bastion
-ssh-copy-id -i mykey.rsa.pub -o "IdentityFile hostkey.rsa" user@target
+REM ssh-copy-id -i mykey.rsa.pub -o "IdentityFile hostkey.rsa" user@target
 
 goto :eof
 

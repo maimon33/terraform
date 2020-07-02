@@ -12,3 +12,8 @@ variable "env_name" {
     default = "terraform"
     type    = string
 }
+
+variable "backend_bucket" {
+    default = ""
+    type    = string
+}
