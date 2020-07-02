@@ -15,6 +15,5 @@ for f in $PUB_KEYS
 do
   echo "Processing $f file..."
   comment=$(echo "$f" | rev | cut -d "/" -f 1 | rev)
-  cat $f >> /home/ubuntu/.ssh/authorized_keys
-  echo " - $comment" >> /home/ubuntu/.ssh/authorized_keys
+  cat $f >> /home/ubuntu/.ssh/authorized_keys && echo " - $comment" >> /home/ubuntu/.ssh/authorized_keys
 done
