@@ -35,7 +35,7 @@ resource "aws_instance" "bastion" {
         "sudo apt-get install awscli -y",
         "chmod +x /home/ubuntu/bastion/bastion-keys.sh",
         "sed -i 's/SED_BUCKET/${var.backend_bucket}/g' /home/ubuntu/bastion/bastion-keys.sh",
-        "sudo cat /home/ubuntu/bastion/bastion-cron | crontab -",
+        "cat /home/ubuntu/bastion/bastion-cron | crontab -",
         ]
     }
 

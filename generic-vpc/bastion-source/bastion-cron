@@ -1,1 +1,1 @@
-*/5 * * * * /home/ubuntu/bastion/bastion-keys.sh
+*/5 * * * * /home/ubuntu/bastion/bastion-keys.sh &>> /home/ubuntu/bastion/log
