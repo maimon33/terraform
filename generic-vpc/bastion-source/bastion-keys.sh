@@ -16,3 +16,4 @@ do
   cat $f >> /home/ubuntu/.ssh/authorized_keys
   echo " - $comment" >> /home/ubuntu/.ssh/authorized_keys
 done
+
