@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Revert to orig authorized_keys files and create if for the fisrt time
 if [ -f "/home/ubuntu/.ssh/authorized_keys.orig" ]; then
