@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Revert to orig authorized_keys files and create if for the fisrt time
 if [ -f "/home/ubuntu/.ssh/authorized_keys.orig" ]; then
@@ -18,4 +18,3 @@ do
   cat $f >> /home/ubuntu/.ssh/authorized_keys
   echo " - $comment" >> /home/ubuntu/.ssh/authorized_keys
 done
-
