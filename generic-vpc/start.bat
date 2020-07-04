@@ -27,6 +27,7 @@ aws s3api put-public-access-block --bucket %s3_bucket% --public-access-block-con
 
 REM Init Terraform and setup S3 backend
 set TF_IN_AUTOMATION=true
+cd terraform
 terraform init -backend-config="bucket=%s3_bucket%" -backend-config="key=%env_name%.tfstate" -backend-config="region=%region%" -backend=true -force-copy -get=true -input=false
 
 REM handle SSH key
@@ -34,8 +35,8 @@ if exist id_rsa (
     echo SSH exists
 ) else (
     ssh-keygen -N "" -f id_rsa
-    aws s3 cp id_rsa s3://s3-assi-terraform-bucket/keys/
-    aws s3 cp id_rsa.pub s3://s3-assi-terraform-bucket/keys/
+    aws s3 cp id_rsa s3://%s3_bucket%/keys/master-keys/
+    aws s3 cp id_rsa.pub s3://%s3_bucket%/keys/master-keys/
 )
 
 if /i "%mode%"=="destroy" goto :destroy
@@ -44,17 +45,15 @@ REM Terraform apply
 if /i "%mode%"=="quiet" set quiet_mode="-auto-approve"
 terraform apply -var env_name=%env_name% -var region=%region% -var backend_bucket=%s3_bucket% %quiet_mode%
 set quiet_mode=
-
-REM provision bastion
-REM ssh-copy-id -i mykey.rsa.pub -o "IdentityFile hostkey.rsa" user@target
-
+cd ../
 goto :eof
 
 :destroy
 REM Terraform Destroy
 terraform destroy -var env_name=%env_name% -var region=%region%
+cd ../
 goto :eof
 
 :usage
-@echo Usage: %0 env_name region quiet
+@echo Usage: %0 env_name region [quiet, destroy]
 exit /B 1
